@@ -163,21 +163,25 @@ def main():
     print(f"- Recommendation: {lgbm_recommendation_text}")
     print("==========================================\n")
 
-# ===== CONSENSUS SUMMARY =====
-    predictions = [linreg_pred, logreg_pred, xgb_pred, mlp_class, lgbm_pred]
-    probabilities = [linreg_pred, logreg_prob_up, xgb_prob_up, mlp_proba, lgbm_prob_up]
-    
-    buy_votes = sum(predictions)
-    avg_confidence = np.mean(probabilities)
-    
-    print("\n===== CONSENSUS SUMMARY =====")
-    print(f"Models voting BUY: {round(buy_votes)} out of 5")  
-    print(f"Average confidence: {avg_confidence:.2%}")
-    if buy_votes >= 3:
-        print(f"CONSENSUS: BUY (majority agreement)")
-    else:
-        print(f"CONSENSUS: HOLD (majority expects downward/uncertain movement)")
-    print("==========================================\n")
+# ===== CONSENSUS SUMMARY (CLEAN FIX) =====
+    linreg_vote = int(linreg_pred > 0)       
+    logreg_vote = int(logreg_pred == 1)        
+    xgb_vote    = int(xgb_pred == 1)           
+    mlp_vote    = int(mlp_class == 1)          
+    lgbm_vote   = int(lgbm_pred == 1)  
+    votes = [linreg_vote, logreg_vote, xgb_vote, mlp_vote, lgbm_vote]
+    buy_votes = sum(votes)
 
+    probas_up = [logreg_prob_up, xgb_prob_up, mlp_proba, lgbm_prob_up]
+    avg_confidence_up = float(np.mean(probas_up))
+
+    print("\n===== CONSENSUS SUMMARY =====")
+    print(f"Models voting BUY: {buy_votes} out of 5")
+
+    if buy_votes >= 3:
+        print("CONSENSUS: BUY (majority agreement)")
+    else:
+        print("CONSENSUS: HOLD (majority expects downward/uncertain movement)")
+    print("==========================================\n")
 if __name__ == "__main__":
     main()
