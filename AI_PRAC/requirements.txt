@@ -1,0 +1,6 @@
+"numpy<2"
+torch
+torchvision
+torchaudio
+gymnasium
+matplotlib
